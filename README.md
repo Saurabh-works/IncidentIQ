@@ -1,43 +1,107 @@
 # IncidentIQ
 
-IncidentIQ is an AI-inspired production incident simulator and real-time observability dashboard. It models six backend services, injects controlled failures, streams logs and metrics, and generates rule-based root cause analysis reports.
+IncidentIQ is a full-stack production incident simulator and real-time observability dashboard. It simulates backend services, injects controlled failures, streams logs and metrics, and generates rule-based root cause analysis reports.
 
-It also includes an independently running test API that can be registered as a custom external service. IncidentIQ probes its real HTTP endpoint, measures actual response behavior, and applies controlled anomalies through a protected control endpoint.
+The project also includes an independent **test API** that can be registered as a custom external service. IncidentIQ monitors the real HTTP endpoint, measures response behavior, and applies controlled anomalies through a protected control endpoint.
+
+> **Project status:** Local development complete. Deployment is planned for Netlify, AWS EC2/Render/Railway, and Vercel/Render.
 
 ![IncidentIQ dashboard screenshot placeholder](https://placehold.co/1200x650/020617/22d3ee?text=IncidentIQ+Dashboard+Screenshot)
 
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Architecture Overview](#architecture-overview)
+- [Local Setup](#local-setup)
+- [Environment Variables](#environment-variables)
+- [API Endpoints](#api-endpoints)
+- [Deployment Plan](#deployment-plan)
+- [Roadmap](#roadmap)
+
 ## Features
 
-- Real-time service health dashboard for six simulated services
-- Latency spike, error-rate, service-down, memory-leak, and database-slowdown incidents
+- Real-time service health dashboard for simulated backend services
+- Incident injection for latency spikes, error-rate increases, service downtime, memory leaks, and database slowdowns
 - Automatic incident resolution and gradual service recovery
 - Persistent logs, historical metric snapshots, incident history, and RCA reports
-- Redis-backed live state, dashboard summary, recent logs, active incidents, and latest metrics
-- Socket.IO updates for dashboards, services, incidents, logs, metrics, and RCA reports
-- Rule-based RCA engine that correlates incidents, telemetry, logs, and history
-- Responsive dark monitoring interface with Recharts visualizations
+- Redis-backed live state for dashboard summary, recent logs, active incidents, services, and latest metrics
+- Socket.IO-powered real-time updates for dashboards, services, incidents, logs, metrics, and RCA reports
+- Rule-based RCA engine that correlates incidents, telemetry, logs, and historical context
+- Responsive dark monitoring UI with Recharts visualizations
 - Custom external service registration and real HTTP endpoint monitoring
 - Independent test API with controlled real latency, error, and availability anomalies
 
 ## Tech Stack
 
-**Frontend:** React, Vite, JavaScript, Material UI, Axios, React Router, Socket.IO Client, Recharts, Lucide React
+### Frontend
 
-**Backend:** Node.js, Express, MongoDB, Mongoose, Redis, Socket.IO, dotenv, cors, morgan
+- React
+- Vite
+- JavaScript
+- Material UI
+- Axios
+- React Router
+- Socket.IO Client
+- Recharts
+- Lucide React
 
-## Folder Structure
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- Redis
+- Socket.IO
+- dotenv
+- cors
+- morgan
+
+### Test API
+
+- Node.js
+- Express.js
+- dotenv
+- cors
+- morgan
+
+## Project Structure
 
 ```txt
 IncidentIQ/
-  frontend/          # React dashboard
-  backend/           # Express API and simulation engine
+  frontend/          # React + Vite dashboard
+  backend/           # Express API, Socket.IO server, and simulation engine
   test-api/          # Independent API monitored through real HTTP calls
   README.md
 ```
 
-## Data Architecture
+This repository is structured as a **monorepo**. The frontend, backend, and test API live in the same GitHub repository but can be deployed separately from their own folders.
 
-Redis is the live-state layer. It stores frequently changing service health, active incidents, recent logs, dashboard summary, and latest metrics:
+## Architecture Overview
+
+```txt
+Frontend Dashboard
+   |
+   | REST API + Socket.IO
+   v
+Backend API / Simulation Engine
+   |
+   | Live state cache
+   v
+Redis
+   |
+   | Historical persistence
+   v
+MongoDB
+
+External Test API <---- monitored by ---- Backend External Monitor
+```
+
+### Redis Live-State Layer
+
+Redis stores frequently changing runtime data:
 
 ```txt
 incidentiq:services
@@ -47,28 +111,57 @@ incidentiq:dashboard_summary
 incidentiq:metrics:latest
 ```
 
-MongoDB is the historical persistence layer. It stores services, incidents, all logs, metric snapshots, and RCA reports. If Redis is temporarily unavailable, the backend continues with a process-memory fallback and reconnects through the official Redis client.
+### MongoDB Persistence Layer
+
+MongoDB stores long-term application data including:
+
+- Services
+- Incidents
+- Logs
+- Metric snapshots
+- RCA reports
+
+If Redis is temporarily unavailable, the backend continues with a process-memory fallback and reconnects through the official Redis client.
 
 ## Local Setup
 
-Requirements: Node.js 18+, MongoDB, and Redis.
+### Prerequisites
 
-1. Create environment files:
+Make sure you have the following installed:
+
+- Node.js 18+
+- MongoDB local instance or MongoDB Atlas URI
+- Redis local instance or hosted Redis URL
+- npm
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/incidentiq.git
+cd incidentiq
+```
+
+Replace `your-username` with your GitHub username after pushing the project.
+
+### 2. Create Environment Files
 
 ```bash
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
+cp test-api/.env.example test-api/.env
 ```
 
-2. Start MongoDB and Redis:
+### 3. Start MongoDB and Redis
+
+If you are using local Redis:
 
 ```bash
 redis-server
 ```
 
-MongoDB Atlas and Redis Cloud/Upstash can also be used by changing `MONGO_URI` and `REDIS_URL`.
+For MongoDB, you can use a local MongoDB server or MongoDB Atlas.
 
-3. Start the backend:
+### 4. Start the Backend
 
 ```bash
 cd backend
@@ -76,7 +169,15 @@ npm install
 npm run dev
 ```
 
-4. Start the frontend in another terminal:
+Backend runs on:
+
+```txt
+http://localhost:5000
+```
+
+### 5. Start the Frontend
+
+Open a new terminal:
 
 ```bash
 cd frontend
@@ -84,9 +185,15 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`.
+Frontend runs on:
 
-5. Start and connect the independent test API:
+```txt
+http://localhost:5173
+```
+
+### 6. Start the Test API
+
+Open another terminal:
 
 ```bash
 cd test-api
@@ -94,7 +201,15 @@ npm install
 npm start
 ```
 
-Open **Custom Services** in IncidentIQ and use the pre-filled values:
+Test API runs on:
+
+```txt
+http://localhost:7000
+```
+
+### 7. Register the Test API in IncidentIQ
+
+Open **Custom Services** inside the IncidentIQ dashboard and use:
 
 ```txt
 Name: IncidentIQ Test API
@@ -104,11 +219,15 @@ Test endpoint: /api/products
 Control key: incidentiq-local-control
 ```
 
-IncidentIQ sends one real HTTP probe every three seconds. Incidents injected into this external service change its actual HTTP response latency, status codes, or availability. Use controlled anomalies only against APIs you own and only in local or staging environments.
+IncidentIQ sends one real HTTP probe every three seconds. Incidents injected into this external service change its actual HTTP response latency, status codes, or availability.
+
+> Use controlled anomalies only against APIs you own and only in local or staging environments.
 
 ## Environment Variables
 
-Backend:
+### Backend
+
+Create `backend/.env`:
 
 ```env
 PORT=5000
@@ -119,38 +238,51 @@ USE_REAL_AI=false
 AI_API_KEY=
 ```
 
-Frontend:
+### Frontend
+
+Create `frontend/.env`:
 
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
 VITE_SOCKET_URL=http://localhost:5000
 ```
 
+### Test API
+
+Create `test-api/.env`:
+
+```env
+PORT=7000
+INCIDENTIQ_CONTROL_KEY=incidentiq-local-control
+```
+
+> Do not commit real `.env` files to GitHub. Commit only `.env.example` files.
+
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/dashboard/summary` | Dashboard summary |
-| GET | `/api/services` | Current service state |
-| GET | `/api/services/:id` | Single service |
+| GET | `/api/dashboard/summary` | Get dashboard summary |
+| GET | `/api/services` | Get current service state |
+| GET | `/api/services/:id` | Get a single service |
 | POST | `/api/services/reset` | Reset service telemetry |
 | POST | `/api/services/external` | Register and verify an external service |
 | POST | `/api/services/:id/test` | Test an external service connection |
 | DELETE | `/api/services/:id` | Remove an external service |
-| GET | `/api/incidents` | Incident history |
-| GET | `/api/incidents/active` | Active incidents |
+| GET | `/api/incidents` | Get incident history |
+| GET | `/api/incidents/active` | Get active incidents |
 | POST | `/api/incidents/inject` | Inject an incident |
 | PATCH | `/api/incidents/:id/resolve` | Resolve an active incident |
-| GET | `/api/logs` | Filterable historical logs |
-| GET | `/api/logs/recent` | Recent Redis-cached logs |
-| GET | `/api/metrics` | Historical metrics |
-| GET | `/api/metrics/latest` | Latest Redis-cached metrics |
-| GET | `/api/metrics/:serviceName` | Metrics for one service |
+| GET | `/api/logs` | Get filterable historical logs |
+| GET | `/api/logs/recent` | Get recent Redis-cached logs |
+| GET | `/api/metrics` | Get historical metrics |
+| GET | `/api/metrics/latest` | Get latest Redis-cached metrics |
+| GET | `/api/metrics/:serviceName` | Get metrics for one service |
 | POST | `/api/rca/generate` | Generate an RCA report |
-| GET | `/api/rca/latest` | Latest RCA report |
-| GET | `/api/rca` | RCA report history |
+| GET | `/api/rca/latest` | Get latest RCA report |
+| GET | `/api/rca` | Get RCA report history |
 
-Example incident:
+### Example Incident Payload
 
 ```json
 {
@@ -161,17 +293,65 @@ Example incident:
 }
 ```
 
-## Future Improvements
+## Deployment Plan
 
-- Optional real AI provider integration behind `USE_REAL_AI`
-- Dependency topology and downstream impact propagation
-- Saved incident scenarios and chaos experiments
-- Alert rules, notification channels, and SLO tracking
-- Team authentication and environment separation
+This project is not deployed yet. Planned deployment structure:
 
-## Resume Bullets
+| App | Folder | Planned Platform | Notes |
+|---|---|---|---|
+| Frontend | `frontend/` | Netlify | Deploy as a Vite React app |
+| Backend | `backend/` | AWS EC2 / Render / Railway | Better suited for Express + Socket.IO |
+| Test API | `test-api/` | Vercel / Render / Railway | Simple standalone Express API |
+| Database | External | MongoDB Atlas | Production MongoDB database |
+| Redis | External | Upstash / Redis Cloud | Hosted Redis instance |
 
-- Built an AI-powered production incident simulator using MERN stack and Redis to inject latency, error-rate, and service-down failures across simulated backend services.
-- Designed a real-time observability dashboard with service health, p95 latency, error rate, logs, metrics, and incident timelines using React, Socket.IO, and Recharts.
-- Used Redis for live service state, recent logs, latest metrics, and active incident caching while persisting historical logs and metrics in MongoDB.
+### Netlify Frontend Settings
+
+When deploying the frontend from this monorepo:
+
+```txt
+Base directory: frontend
+Build command: npm run build
+Publish directory: frontend/dist
+```
+
+Production frontend variables will need to point to the deployed backend:
+
+```env
+VITE_API_BASE_URL=https://your-backend-url.com/api
+VITE_SOCKET_URL=https://your-backend-url.com
+```
+
+### Backend Production Notes
+
+The backend should run as a long-lived Node.js server because it uses Socket.IO and background simulation services. For production, configure:
+
+```env
+PORT=5000
+MONGO_URI=your-production-mongodb-uri
+REDIS_URL=your-production-redis-url
+CLIENT_URL=https://your-frontend-domain.netlify.app
+USE_REAL_AI=false
+AI_API_KEY=
+```
+
+## Roadmap
+
+- Add deployed frontend, backend, and test API links
+- Replace placeholder image with real dashboard screenshots
+- Add optional real AI provider integration behind `USE_REAL_AI`
+- Add dependency topology and downstream impact propagation
+- Add saved incident scenarios and chaos experiments
+- Add alert rules, notification channels, and SLO tracking
+- Add team authentication and environment separation
+
+## Resume Highlights
+
+- Built a production incident simulator using React, Node.js, MongoDB, Redis, and Socket.IO to inject controlled failures across simulated backend services.
+- Designed a real-time observability dashboard with service health, p95 latency, error rate, logs, metrics, and incident timelines.
+- Used Redis for live service state, recent logs, latest metrics, and active incident caching while persisting historical data in MongoDB.
 - Implemented a rule-based RCA engine that analyzes active incidents, service metrics, and error logs to generate root cause summaries and remediation steps.
+
+## License
+
+This project is currently for learning and portfolio use. Add a license before using it in production or distributing it publicly.
