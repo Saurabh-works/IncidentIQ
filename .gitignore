@@ -1,0 +1,8 @@
+backend/.env
+frontend/.env
+test-api/.env
+backend/node_modules/
+frontend/node_modules/
+test-api/node_modules/
+frontend/dist/
+*.log

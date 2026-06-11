@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { createExternalService, deleteExternalService, getService, getServices, resetServices, testExternalService } from "../controllers/services.controller.js";
+const router = Router();
+router.get("/", getServices);
+router.post("/reset", resetServices);
+router.post("/external", createExternalService);
+router.post("/:id/test", testExternalService);
+router.delete("/:id", deleteExternalService);
+router.get("/:id", getService);
+export default router;
