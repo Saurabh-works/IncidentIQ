@@ -234,7 +234,11 @@ MONGO_URI=mongodb://127.0.0.1:27017/incidentiq
 REDIS_URL=redis://127.0.0.1:6379
 CLIENT_URL=http://localhost:5173
 USE_REAL_AI=false
-AI_API_KEY=
+RCA_PROVIDER=rule-based
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.1-flash-lite
+GEMINI_DAILY_REQUEST_LIMIT=1000
+GEMINI_DAILY_TOKEN_LIMIT=1000000
 ```
 
 ### Frontend
@@ -279,7 +283,10 @@ INCIDENTIQ_CONTROL_KEY=incidentiq-local-control
 | GET | `/api/metrics/:serviceName` | Get metrics for one service |
 | POST | `/api/rca/generate` | Generate an RCA report |
 | GET | `/api/rca/latest` | Get latest RCA report |
+| GET | `/api/rca/quota` | Get Gemini availability status |
 | GET | `/api/rca` | Get RCA report history |
+
+The RCA page supports Rule-Based and Gemini AI modes. Gemini failures automatically fall back to the rule engine, and the page displays whether Gemini is currently available.
 
 ### Example Incident Payload
 
@@ -331,7 +338,11 @@ MONGO_URI=your-production-mongodb-uri
 REDIS_URL=your-production-redis-url
 CLIENT_URL=https://your-frontend-domain.netlify.app
 USE_REAL_AI=false
-AI_API_KEY=
+RCA_PROVIDER=rule-based
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.1-flash-lite
+GEMINI_DAILY_REQUEST_LIMIT=1000
+GEMINI_DAILY_TOKEN_LIMIT=1000000
 ```
 
 ## License

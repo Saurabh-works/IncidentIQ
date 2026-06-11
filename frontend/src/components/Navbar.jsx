@@ -1,5 +1,4 @@
-import { Box, Chip, Typography } from "@mui/material";
-import { Radio } from "lucide-react";
+import { Box, Typography } from "@mui/material";
 import { useLocation } from "react-router-dom";
 const names = { "/":"System Overview", "/simulator":"Incident Simulator", "/services":"Custom Services", "/logs":"Live Logs", "/metrics":"Performance Metrics", "/timeline":"Incident Timeline", "/rca":"Root Cause Analysis" };
-export default function Navbar() { const { pathname }=useLocation(); return <Box component="header" sx={{ mb:4, pb:2.5, pl:{xs:6,lg:0}, borderBottom:"1px solid", borderColor:"divider", display:"flex", justifyContent:"space-between", alignItems:"center" }}><Box><Typography variant="caption" color="primary.main" fontWeight={500} sx={{ textTransform:"uppercase", letterSpacing:2 }}>Observability workspace</Typography><Typography variant="h5">{names[pathname] || "IncidentIQ"}</Typography></Box><Chip icon={<Radio size={13}/>} label="Live" color="success" variant="outlined" sx={{ display:{xs:"none",sm:"flex"} }}/></Box>; }
+export default function Navbar() { const { pathname }=useLocation(); return <Box component="header" sx={{ mb:4, pb:2.5, pl:{xs:6,lg:0}, borderBottom:"1px solid", borderColor:"divider" }}><Typography variant="caption" color="primary.main" fontWeight={500} sx={{ textTransform:"uppercase", letterSpacing:2 }}>Observability workspace</Typography><Typography variant="h5">{names[pathname] || "IncidentIQ"}</Typography></Box>; }
