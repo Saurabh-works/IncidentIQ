@@ -18,7 +18,6 @@ The project also includes an independent **test API** that can be registered as 
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
 - [Deployment Plan](#deployment-plan)
-- [Roadmap](#roadmap)
 
 ## Features
 
@@ -334,23 +333,6 @@ CLIENT_URL=https://your-frontend-domain.netlify.app
 USE_REAL_AI=false
 AI_API_KEY=
 ```
-
-## Roadmap
-
-- Add deployed frontend, backend, and test API links
-- Replace placeholder image with real dashboard screenshots
-- Add optional real AI provider integration behind `USE_REAL_AI`
-- Add dependency topology and downstream impact propagation
-- Add saved incident scenarios and chaos experiments
-- Add alert rules, notification channels, and SLO tracking
-- Add team authentication and environment separation
-
-## Resume Highlights
-
-- Built a production incident simulator using React, Node.js, MongoDB, Redis, and Socket.IO to inject controlled failures across simulated backend services.
-- Designed a real-time observability dashboard with service health, p95 latency, error rate, logs, metrics, and incident timelines.
-- Used Redis for live service state, recent logs, latest metrics, and active incident caching while persisting historical data in MongoDB.
-- Implemented a rule-based RCA engine that analyzes active incidents, service metrics, and error logs to generate root cause summaries and remediation steps.
 
 ## License
 
